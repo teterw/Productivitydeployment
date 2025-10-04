@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aevur - Doctor Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        /* Dark Theme (Default) */
+        body.dark {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+        }
+
+        /* Light Theme */
+        body.light {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .dark .header {
+            background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
+            border: 1px solid #444;
+        }
+
+        .light .header {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .dark .nav-link {
+            color: #ffffff;
+            background: transparent;
+        }
+
+        .light .nav-link {
+            color: #333333;
+            background: transparent;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+        }
+
+        .dark .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .light .nav-link:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-link.active {
+            font-weight: bold;
+        }
+
+        .dark .nav-link.active {
+            background: linear-gradient(135deg, #4a4a4a 0%, #5a5a5a 100%);
+            color: #4CAF50;
+        }
+
+        .light .nav-link.active {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: #ffffff;
+        }
+
+        .theme-toggle-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .dark .theme-toggle-btn {
+            background: linear-gradient(135deg, #4a4a4a 0%, #666666 100%);
+            color: #ffffff;
+        }
+
+        .light .theme-toggle-btn {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: #ffffff;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .dark .hero-section {
+            background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
+            border: 2px solid #4CAF50;
+        }
+
+        .light .hero-section {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid #007bff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .hero-section h1 {
+            font-size: 28px;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .hero-section p {
+            font-size: 18px;
+            opacity: 0.8;
+        }
+
+        /* Results Section */
+        .section {
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .dark .section {
+            background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
+            border: 1px solid #444;
+        }
+
+        .light .section {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            opacity: 0.7;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .result-card {
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .result-card.success {
+            background: rgba(76, 175, 80, 0.1);
+            border: 2px solid #4CAF50;
+        }
+
+        .result-card.danger {
+            background: rgba(244, 67, 54, 0.1);
+            border: 2px solid #f44336;
+        }
+
+        .result-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .result-details {
+            flex: 1;
+        }
+
+        .result-details h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .result-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .result-status.success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .result-status.danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .result-value {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        /* Suggestions Section */
+        .suggestions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .suggestion-card {
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .dark .suggestion-card {
+            background: #3a3a3a;
+            border: 1px solid #4a4a4a;
+        }
+
+        .light .suggestion-card {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+        }
+
+        .suggestion-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .suggestion-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .suggestion-tag {
+            background: #4CAF50;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .suggestion-text {
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        /* AI Section */
+        .ai-section {
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .dark .ai-section {
+            background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
+            border: 1px solid #444;
+        }
+
+        .light .ai-section {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .ai-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .ai-output {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            resize: vertical;
+            border: none;
+            outline: none;
+        }
+
+        .dark .ai-output {
+            background: #1a1a1a;
+            color: #ffffff;
+            border: 1px solid #444;
+        }
+
+        .light .ai-output {
+            background: #f8f9fa;
+            color: #333333;
+            border: 1px solid #ddd;
+        }
+
+        .ai-input-container {
+            display: flex;
+            gap: 15px;
+        }
+
+        .ai-input {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 16px;
+            border: none;
+            outline: none;
+        }
+
+        .dark .ai-input {
+            background: #3a3a3a;
+            color: #ffffff;
+            border: 1px solid #555;
+        }
+
+        .light .ai-input {
+            background: #ffffff;
+            color: #333333;
+            border: 1px solid #ddd;
+        }
+
+        .ai-send {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .dark .ai-send {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: #ffffff;
+        }
+
+        .light .ai-send {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: #ffffff;
+        }
+
+        .ai-send:hover {
+            transform: translateY(-2px);
+        }
+
+        .alert {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            background: rgba(244, 67, 54, 0.1);
+            border: 1px solid #f44336;
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header-nav {
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .nav-link {
+                width: 100%;
+                text-align: center;
+            }
+
+            .hero-section {
+                padding: 25px;
+            }
+
+            .hero-section h1 {
+                font-size: 22px;
+            }
+
+            .hero-section p {
+                font-size: 16px;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .result-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .suggestions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ai-input-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body class="dark">
+    <div class="container">
+        <div class="header">
+            <div class="header-nav">
+                    <a href="Userpage.html" class="nav-link active">Dashboard</a>
+                    <a href="app.html" class="nav-link">หมอ</a>
+                    <a href="profile.html" class="nav-link">โปรไฟล์ หน้าผู้ใช้</a>
+            </div>
+            <button class="theme-toggle-btn" onclick="toggleTheme()">🌙 Dark</button>
+        </div>
+
+        <div class="hero-section">
+            <h1>เช็กสุขภาพล่วงหน้า เพื่อชีวิตที่ยืนยาว</h1>
+            <p>Aevur วิเคราะห์ความเสี่ยงของโรคจากข้อมูลสุขภาพของคุณ เพื่อช่วยป้องกันก่อนสายเกินไป</p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">ผลการวิเคราะห์สำหรับคุณ</div>
+            <div class="section-subtitle">Health insights</div>
+            <div class="result-grid" id="result-cards">
+                <div class="result-card success">
+                    <img src="https://bz49dmux6d.ufs.sh/f/1Q7cAF0oN6JTLqYK7j5kX0SfouG3gHjNi7P1CsqceVOvn68A" class="result-img" alt="โรคเบาหวาน">
+                    <div class="result-details">
+                        <h3>โรคเบาหวาน</h3>
+                        <div class="result-status success">กำลังโหลด...</div>
+                        <div class="result-value">ค่า : 0.000</div>
+                    </div>
+                </div>
+                <div class="result-card success">
+                    <img src="https://bz49dmux6d.ufs.sh/f/1Q7cAF0oN6JTml6DJ2HxG6E3TILBoXrtsVONDbQPY0Kinl1F" class="result-img" alt="โรคไตวาย">
+                    <div class="result-details">
+                        <h3>โรคไตวาย</h3>
+                        <div class="result-status success">กำลังโหลด...</div>
+                        <div class="result-value">ค่า : 0.000</div>
+                    </div>
+                </div>
+            </div>
+            <div id="alerts"></div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">คำแนะนำสำหรับคุณ</div>
+            <div class="section-subtitle">Health insights for You</div>
+            <div class="suggestions-grid">
+                <div class="suggestion-card">
+                    <div class="suggestion-header">
+                        <span>คำแนะนำเพื่อสุขภาพ :</span>
+                        <span class="suggestion-tag">ทั่วไป</span>
+                    </div>
+                    <div class="suggestion-text">
+                        ดื่มน้ำให้เพียงพอ อย่างน้อย 8-10 แก้วต่อวัน เพื่อช่วยในการขับถ่าย และรักษาสมดุลของร่างกาย
+                    </div>
+                </div>
+                <div class="suggestion-card">
+                    <div class="suggestion-header">
+                        <span>คำแนะนำเพื่อสุขภาพ :</span>
+                        <span class="suggestion-tag">โภชนาการ</span>
+                    </div>
+                    <div class="suggestion-text">
+                        ลดการบริโภคอาหารที่มีน้ำตาลสูง และเพิ่มผักผลไม้ในมื้ออาหาร เพื่อควบคุมระดับน้ำตาลในเลือด
+                    </div>
+                </div>
+                <div class="suggestion-card">
+                    <div class="suggestion-header">
+                        <span>คำแนะนำเพื่อสุขภาพ :</span>
+                        <span class="suggestion-tag">การออกกำลังกาย</span>
+                    </div>
+                    <div class="suggestion-text">
+                        ออกกำลังกายสม่ำเสมออย่างน้อยสัปดาห์ละ 3-5 ครั้ง ครั้งละ 30 นาที เพื่อสุขภาพหัวใจที่แข็งแรง
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ai-section">
+            <div class="ai-title">Aevur.AI ช่วยตอบคำถามที่คุณสงสัย</div>
+            <textarea class="ai-output" id="ai-output" readonly placeholder="คำตอบจาก AI จะแสดงที่นี่..."></textarea>
+            <div class="ai-input-container">
+                <input type="text" class="ai-input" id="ai-input" placeholder="พิมพ์คำถามของคุณ...">
+                <button class="ai-send" id="ai-send">ส่ง</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const themeBtn = document.querySelector('.theme-toggle-btn');
+            
+            if (body.classList.contains('dark')) {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                themeBtn.textContent = '☀️ Light';
+            } else {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                themeBtn.textContent = '🌙 Dark';
+            }
+        }
+
+        // Dynamic update for sensor readings and alerts
+        async function updateData() {
+            try {
+                const response = await fetch('/data');
+                const data = await response.json();
+
+                // Fill result cards
+                const cards = [
+                    {
+                        id: "mq138",
+                        disease: "โรคเบาหวาน",
+                        img: "https://bz49dmux6d.ufs.sh/f/1Q7cAF0oN6JTLqYK7j5kX0SfouG3gHjNi7P1CsqceVOvn68A",
+                        sensor: "MQ-138",
+                    },
+                    {
+                        id: "mq135",
+                        disease: "โรคไตวาย",
+                        img: "https://bz49dmux6d.ufs.sh/f/1Q7cAF0oN6JTml6DJ2HxG6E3TILBoXrtsVONDbQPY0Kinl1F",
+                        sensor: "MQ-135",
+                    }
+                ];
+                
+                let html = "";
+                for (const card of cards) {
+                    const danger = data.alert_status[card.sensor];
+                    html += `
+                    <div class="result-card ${danger ? "danger" : "success"}">
+                        <img src="${card.img}" class="result-img" alt="${card.disease}">
+                        <div class="result-details">
+                            <h3>${card.disease}</h3>
+                            <div class="result-status ${danger ? "danger" : "success"}">
+                                ${danger ? "มีความเสี่ยง" : "ไม่มีความเสี่ยง"}
+                            </div>
+                            <div class="result-value">ค่า : ${Number(data.readings[card.sensor] ?? 0).toFixed(3)}</div>
+                        </div>
+                    </div>
+                    `;
+                }
+                document.getElementById('result-cards').innerHTML = html;
+
+                // Alerts
+                document.getElementById('alerts').innerHTML = (data.alerts || []).map(
+                    alert => `<div class="alert">${alert}</div>`
+                ).join('');
+            } catch (e) {
+                console.error("Error fetching data:", e);
+            }
+        }
+
+        // AI send handler
+        async function sendAI() {
+            const inputEl = document.getElementById("ai-input");
+            const outputBox = document.getElementById("ai-output");
+            const text = (inputEl.value || "").trim();
+            
+            if (!text) {
+                outputBox.value = "โปรดพิมพ์คำถามของคุณ";
+                return;
+            }
+            
+            outputBox.value = "กำลังประมวลผล...";
+            
+            try {
+                const res = await fetch("/ask", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question: text })
+                });
+                const data = await res.json();
+                outputBox.value = data.answer || "ไม่ได้รับคำตอบจาก AI";
+            } catch (err) {
+                outputBox.value = "เกิดข้อผิดพลาดในการติดต่อ AI";
+            }
+        }
+
+        document.getElementById("ai-send").addEventListener("click", sendAI);
+        document.getElementById("ai-input").addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendAI();
+            }
+        });
+
+        setInterval(updateData, 1000);
+        updateData();
+    </script>
+</body>
+</html>
